@@ -14,9 +14,9 @@ def on_receive_payload(packet, interface):
     print(f"📩 收到消息 from {packet['from']} to {packet['to']}: text={text}, payload={payload}")
 
 
-def listen(devPath):
+def listen(interface):
     # 连接本地设备
-    interface = meshtastic.serial_interface.SerialInterface(devPath=devPath)
+    # interface = meshtastic.serial_interface.SerialInterface(devPath=devPath)
 
     # 注册接收消息的回调
     # interface.onReceive = on_receive
