@@ -1,0 +1,5 @@
+dev1: "/dev/ttyACM0"
+dev2: "/dev/ttyACM0"
+
+dev1_id: "!f4624b5c"
+dev2_id: "!929fb946"
