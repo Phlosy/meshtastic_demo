@@ -8,7 +8,7 @@ from my_meshtastic.message.send import send_message
 def main():
     devinfo=load_config("config/device.yaml")
     print(devinfo)
-    send_message(devinfo['dev1'], "Hello, World!", devinfo['dev2_id'])
+    send_message(devinfo['dev1'], "Hello", devinfo['dev2_id'])
     
 
 
