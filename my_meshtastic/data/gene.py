@@ -8,9 +8,10 @@ def generate_1kb_data():
     chars = string.ascii_letters + string.digits + string.punctuation
     return ''.join(random.choices(chars, k=1024))
 
-# 示例：直接获取1KB数据
-if __name__ == "__main__":
-    data = generate_1kb_data()
-    print(f"生成的数据长度: {len(data)} 字符")
-    print(data)
+def generate_200b_data():
+    chars = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choices(chars, k=200))
 
+def generate_150b_data():
+    chars = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choices(chars, k=150))
