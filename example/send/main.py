@@ -10,11 +10,13 @@ import meshtastic.serial_interface
 
 
 def main():
+    source_dev= "dev2"
     devinfo=load_config("config/device.yaml")
     print(devinfo)
-    interface = meshtastic.serial_interface.SerialInterface(devPath=devinfo['dev1'])
+    interface = meshtastic.serial_interface.SerialInterface(devPath=devinfo[source_dev])
     for i in range(10):
-        send_message(interface, "Hello", devinfo['dev2_id'])
+        send_message(interface, "Hello", devinfo['dev3_id'])
+        send_message(interface, "Hello", devinfo['dev4_id'])
         time.sleep(1)
     interface.close()
     
