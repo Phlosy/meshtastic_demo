@@ -25,7 +25,7 @@ def listen(interface):
     print("开始监听消息...")
     try:
         while True:
-            time.sleep(1)  # 保持主线程运行
+            time.sleep(0.01)  # 保持主线程运行
     except KeyboardInterrupt:
         print("退出监听")
         interface.close()

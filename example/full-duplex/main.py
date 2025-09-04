@@ -25,12 +25,12 @@ def main():
     time.sleep(1)
     
     for i in range(10):
-        send_message(interface, "Hello", devinfo['dev2_id'])
-        time.sleep(1)
+        send_message(interface, "Hello" + str(i), devinfo['dev1_id'])
+        time.sleep(2)
   
-    print("消息发送完毕，保持接收3秒后退出")
+    # print("消息发送完毕，保持接收3秒后退出")
 
-    time.sleep(3)  # 保持接收
+    time.sleep(1000)  # 保持接收
     interface.close()
 
 if __name__ == "__main__":

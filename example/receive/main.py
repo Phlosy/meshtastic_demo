@@ -9,10 +9,13 @@ import meshtastic
 import meshtastic.serial_interface
 
 def main():
+
+    dest_dev = 'dev4'
     devinfo=load_config("config/device.yaml")
     print(devinfo)
+    print("正在监听设备:", devinfo[dest_dev])
     # send_message(devinfo['dev1'], "Hello, World!", devinfo['dev2_id'])
-    interface = meshtastic.serial_interface.SerialInterface(devPath=devinfo['dev2'])
+    interface = meshtastic.serial_interface.SerialInterface(devPath=devinfo[dest_dev])
     listen(interface)
 
 

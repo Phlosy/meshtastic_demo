@@ -1,5 +1,10 @@
 dev1: "/dev/ttyACM0"
-dev2: "/dev/ttyACM0"
+dev2: "/dev/ttyACM1"
+dev3: "/dev/ttyACM0"
+dev4: "/dev/ttyACM1"
+dev5: "/dev/ttyACM0"
 
-dev1_id: "!f4624b5c"
-dev2_id: "!929fb946"
+dev1_id: "!f4624b5c" # node5 dev1
+dev2_id: "!bb020b8d" # node5 dev2
+dev3_id: "!929fb946" # node7 dev1
+dev4_id: "!c1107116" # node7 dev2
