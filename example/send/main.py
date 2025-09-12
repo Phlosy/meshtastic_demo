@@ -27,7 +27,7 @@ def main():
         # send_message(interface, data_list[4], devinfo['dev4_id'])
         # send_message(interface, "hello" + str(i), devinfo['dev3_id'])
         send_message(interface, "from " + source_dev + " " + str(i) + ":" + data, devinfo['dev4_id'])
-        time.sleep(4)
+        time.sleep(1)
     interface.close()
     
 
