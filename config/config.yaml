@@ -1,0 +1,13 @@
+dev_path:
+  dev1: "/dev/ttyACM0"
+  dev2: "/dev/ttyACM1"
+
+dev_id:
+  uav1: "!bb020b8d" # node5 dev1
+  uav2: "!f4624b5c" # node5 dev2
+  hub1: "!c1107116" # node7 dev1
+  hub2: "!f0cfb0f1" # node7 dev2
+
+broker: 
+  host: "localhost"
+  port: 1883

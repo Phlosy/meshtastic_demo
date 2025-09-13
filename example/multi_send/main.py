@@ -12,7 +12,7 @@ import meshtastic.serial_interface
 
 def main():
     source_dev_list= ["dev1", "dev2"]
-    devinfo=load_config("config/device.yaml")
+    devinfo=load_config("config/config.yaml")
     interface_list = []
     print(devinfo)
     for source_dev in source_dev_list:
