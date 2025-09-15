@@ -39,20 +39,30 @@ class MQTTClient:
         else:
             print(f"❌ 发送失败: {message}")
 
+    # def subscribe(self, topic: str):
+    #     """订阅主题"""
+    #     self.client.subscribe(topic)
+    #     print(f"📩 已订阅主题: {topic}")
+
+    # def unsubscribe(self, topic: str):
+    #     """取消订阅主题"""
+    #     self.client.unsubscribe(topic)
+    #     print(f"📩 已取消订阅主题: {topic}")
+
     def loop_forever(self):
         """保持连接并监听消息"""
         self.client.loop_forever()
 
 
-if __name__ == "__main__":
-    # 初始化客户端
-    mqtt_client = MQTTClient(broker="localhost", port=1883, topic="test/topic")
+# if __name__ == "__main__":
+#     # 初始化客户端
+#     mqtt_client = MQTTClient(broker="localhost", port=1883, topic="test/topic")
 
-    # 连接到 broker
-    mqtt_client.connect()
+#     # 连接到 broker
+#     mqtt_client.connect()
 
-    # 发布一条测试消息
-    mqtt_client.publish("Hello from class wrapper!")
+#     # 发布一条测试消息
+#     mqtt_client.publish("Hello from class wrapper!")
 
-    # 进入循环，保持监听
-    mqtt_client.loop_forever()
+#     # 进入循环，保持监听
+#     mqtt_client.loop_forever()
