@@ -9,6 +9,8 @@ import meshtastic.serial_interface
 from my_meshtastic.message.send import send_message
 import json
 from my_meshtastic.message.receive import listen
+import threading
+import time
 
 def main():
  
@@ -19,27 +21,28 @@ def main():
     # 创建meshtastic接口
     interface = meshtastic.serial_interface.SerialInterface(devPath=devinfo['dev_path']['dev1'])
 
-    # 发送UAV状态数据
-    import multiprocessing
-    import time
+    # 启动后台线程监听消息
+    listener_thread = threading.Thread(target=listen, args=(interface,), daemon=True)
+    listener_thread.start()
 
-    def send_loop(interface, destdev):
-        for _ in range(10):
-            uav_send(interface, destdev)
-            time.sleep(2)  # 可根据需要调整发送间隔
+    time.sleep(2)
+
+    for _ in range(10):
+        uav_send(interface, devinfo['dev_id']['hub1'])
+        time.sleep(2)  # 可根据需要调整发送间隔
 
     # 创建接收进程
-    recv_process = multiprocessing.Process(target=uav_receive, args=(interface,))
+    # recv_process = multiprocessing.Process(target=uav_receive, args=(interface,))
     # 创建发送进程
-    send_process = multiprocessing.Process(target=send_loop, args=(interface, devinfo['dev_id']['hub1']))
+    # send_process = multiprocessing.Process(target=send_loop, args=(interface, devinfo['dev_id']['uav1']))
 
-    # 启动进程
-    recv_process.start()
-    send_process.start()
+    # # 启动进程
+    # # recv_process.start()
+    # time.sleep(2)
+    # send_process.start()
 
-    # 等待发送进程结束
-    send_process.join()
-    # 接收进程可根据需要决定是否终止，这里简单处理为主进程结束时一同结束
+    # # 等待发送进程结束
+    # send_process.join()
 
 def uav_send(interface,destdev):
     """
