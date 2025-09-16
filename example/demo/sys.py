@@ -36,13 +36,19 @@ def main():
     time.sleep(2)
 
     # 接收数据
-    sys_receive(interface, mqtt_uav_client)
+    sys_receive_thread = threading.Thread(target=sys_receive, args=(interface, mqtt_uav_client))
+    sys_receive_thread.start()
+
+
+    sysloopthread = threading.Thread(target=mqtt_sys_client.loop_forever)
+    sysloopthread.start()
 
     # 发送mqtt数据到uav设备
-    sys_send(interface, mqtt_uav_client, mqtt_sys_client, devinfo)
+    sys_send_thread = threading.Thread(target=sys_send, args=(interface, mqtt_sys_client, devinfo))
+    sys_send_thread.start()
 
 
-def sys_receive(interface, mqtt_client):
+def sys_receive(interface, mqtt_uav_client):
     """
     持续监听设备
     获取UAV状态数据
@@ -55,7 +61,7 @@ def sys_receive(interface, mqtt_client):
             print("✅ 收到消息:", message)
 
             # 如果需要转发到 MQTT，这里处理即可
-            mqtt_client.publish(message)
+            mqtt_uav_client.publish(message)
 
     except KeyboardInterrupt:
         print("🔴 手动停止监听")
@@ -63,17 +69,23 @@ def sys_receive(interface, mqtt_client):
 
 
 
-def sys_send(interface, mqtt_client, devinfo):
+def sys_send(interface, mqtt_sys_client, devinfo):
     """
     监听MQTT
     获取灯塔系统计算结果
     发送给UAV设备
     """
     while True:
-        message = mqtt_client.receive_mqtt_message()
+        message = mqtt_sys_client.receive_mqtt_message()
         print("✅ 收到消息:", message)
         send_message(interface, message, devinfo['dev_id']['uav1'])
     
 
 if __name__ == "__main__":
     main()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("🔴 手动退出")

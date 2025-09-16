@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package uav;
+
+// UAV 状态数据
+message UAVStatus {
+  uint64 timestamp_us = 1;    // UNIX 时间戳 (微秒)
+  uint32 uav_id = 2;          // 无人机唯一标识符
+  int32 latitude = 3;         // WGS-84 纬度 (度 * 1e7)
+  int32 longitude = 4;        // WGS-84 经度 (度 * 1e7)
+  float altitude_msl = 5;     // 相对于平均海平面的高度 (米)
+
+  repeated float attitude_q = 6 [packed=true];  // 姿态四元数 [w, x, y, z]
+  repeated float velocity_ned = 7 [packed=true]; // NED 坐标系下的速度矢量 [vx, vy, vz] (米/秒)
+}
+
+
+// UAV 数据
+message UAVData {
+  string type = 1;
+  string name = 2;
+  repeated UAVStatus fields = 3;
+}

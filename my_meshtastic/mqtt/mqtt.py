@@ -24,7 +24,7 @@ class MQTTClient:
 
     def on_message(self, client, userdata, msg):
         """收到消息回调"""
-        # print(f"📨 收到消息: {msg.topic} -> {msg.payload.decode()}")
+        print(f"📨 收到消息: {msg.topic} -> {msg.payload.decode()}")
         self.message_queue.put(msg.payload.decode())
 
     def receive_mqtt_message(self):
@@ -40,7 +40,7 @@ class MQTTClient:
         result = self.client.publish(self.topic, message)
         status = result[0]
         if status == 0:
-            print(f"✅ 已发送消息到 {self.topic}: {message}")
+            print(f"✅ 已发送消息到 {self.topic}")
         else:
             print(f"❌ 发送失败: {message}")
 

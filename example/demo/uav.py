@@ -4,15 +4,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 import meshtastic
 import meshtastic.serial_interface
-import json
 import threading
 import time
 
-from my_meshtastic.data import UavData
 from my_meshtastic.loader import load_config
 from my_meshtastic.message.send import send_message
 from my_meshtastic.message.receive import listen
-
+from my_meshtastic.data import UAVWrapper
 
 def main():
  
@@ -22,6 +20,8 @@ def main():
 
     # 创建meshtastic接口
     interface = meshtastic.serial_interface.SerialInterface(devPath=devinfo['dev_path']['dev1'])
+    # interface.sendData(data_message, destinationId=target_node_id)
+    assert isinstance(interface, meshtastic.serial_interface.SerialInterface), "interface must be a meshtastic.serial_interface.SerialInterface object"
 
     # 启动后台线程监听消息
     listener_thread = threading.Thread(target=listen, args=(interface,), daemon=True)
@@ -55,13 +55,11 @@ def uav_send(interface,destdev):
     """
 
     # 生成UAV状态数据demo
-    uav_data = UavData.generate_uav_data_demo(1)
+    uav_data = UAVWrapper.generate_data_demo(3)
     print(uav_data)
 
-    # 转换为json
-    data = json.dumps(uav_data,ensure_ascii=False)
+    data = UAVWrapper.serialize(uav_data)
     print(len(data))
-
     # 发送到sys上的设备
     send_message(interface, data, destdev)
 

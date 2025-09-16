@@ -1,7 +1,7 @@
 import meshtastic
 import meshtastic.serial_interface
 
-def send_message(interface, text_message, target_node_id):
+def send_message(interface, data_message, target_node_id):
     """
     发送消息
     """
@@ -15,11 +15,11 @@ def send_message(interface, text_message, target_node_id):
     target_node_id = target_node_id  # None 表示广播给所有节点
 
     # 3. 发送文本消息
-    text_message = text_message
+    data_message = data_message
 
-    interface.sendText(text_message, destinationId=target_node_id)
+    interface.sendData(data_message, destinationId=target_node_id)
 
-    print(f"Sent message: '{text_message}' to node {target_node_id}")
+    print(f"Sent message: '{data_message}' to node {target_node_id}")
 
     # 4. 关闭接口
     # interface.close()
