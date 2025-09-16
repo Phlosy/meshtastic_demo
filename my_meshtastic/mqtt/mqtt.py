@@ -1,5 +1,5 @@
 import paho.mqtt.client as mqtt
-
+import queue
 
 class MQTTClient:
     def __init__(self, broker: str, port: int, topic: str):
@@ -7,7 +7,7 @@ class MQTTClient:
         self.port = port
         self.topic = topic
         self.client = mqtt.Client()
-
+        self.message_queue = queue.Queue()
         # 绑定回调
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
@@ -24,8 +24,13 @@ class MQTTClient:
 
     def on_message(self, client, userdata, msg):
         """收到消息回调"""
-        print(f"📨 收到消息: {msg.topic} -> {msg.payload.decode()}")
+        # print(f"📨 收到消息: {msg.topic} -> {msg.payload.decode()}")
+        self.message_queue.put(msg.payload.decode())
 
+    def receive_mqtt_message(self):
+        """接收消息"""
+        return self.message_queue.get()
+    
     def connect(self):
         """连接到 Broker"""
         self.client.connect(self.broker, self.port, 60)

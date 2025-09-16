@@ -2,6 +2,10 @@ import meshtastic
 import meshtastic.serial_interface
 import time
 from pubsub import pub
+import queue
+
+# 队列保存消息
+message_queue = queue.Queue()
 
 def on_receive(packet, interface):
     print("📩 收到消息:", packet)
@@ -11,7 +15,9 @@ def on_receive_payload(packet, interface):
     text = packet['decoded'].get('text')
     # 原始 payload
     payload = packet['decoded'].get('payload')
-    print(f"📩 收到消息 from {packet['from']} to {packet['to']}: text={text}, payload={payload}")
+    # print(f"📩 收到消息 from {packet['from']} to {packet['to']}: text={text}, payload={payload}")
+    if text:
+        message_queue.put(text)
 
 
 def listen(interface):
@@ -29,3 +35,6 @@ def listen(interface):
     except KeyboardInterrupt:
         print("退出监听")
         interface.close()
+
+def receive_meshtastic_message():
+    return message_queue.get()

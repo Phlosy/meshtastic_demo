@@ -2,15 +2,17 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from my_meshtastic.data import UavData
-from my_meshtastic.loader import load_config
 import meshtastic
 import meshtastic.serial_interface
-from my_meshtastic.message.send import send_message
 import json
-from my_meshtastic.message.receive import listen
 import threading
 import time
+
+from my_meshtastic.data import UavData
+from my_meshtastic.loader import load_config
+from my_meshtastic.message.send import send_message
+from my_meshtastic.message.receive import listen
+
 
 def main():
  
@@ -28,7 +30,7 @@ def main():
     time.sleep(2)
 
     for _ in range(10):
-        uav_send(interface, devinfo['dev_id']['hub1'])
+        uav_send(interface, devinfo['dev_id']['uav1'])
         time.sleep(2)  # 可根据需要调整发送间隔
 
     # 创建接收进程
@@ -74,3 +76,9 @@ def uav_receive(interface):
 
 if __name__ == "__main__":
     main()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("🔴 手动退出")
