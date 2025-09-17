@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package sys;
+
+// 地理坐标点 (12 Bytes)
+message GeoPoint {
+  int32 latitude = 1;   // WGS-84 纬度, 整数格式: 实际纬度 * 1e7
+  int32 longitude = 2;  // WGS-84 经度, 整数格式: 实际经度 * 1e7
+  float altitude_msl = 3; // 相对于平均海平面 (MSL) 的高度, 单位: 米
+}
+
+// 其他无人机状态 (28 Bytes)
+message OtherUAVState {
+  uint32 uav_id = 1;         // 其他无人机的唯一标识符
+  GeoPoint position = 2;     // 其他无人机的位置
+  repeated float velocity_ned = 3; // NED 坐标系下的速度矢量 [vx, vy, vz]
+}
+
+// 主数据包 (60 + N*28 Bytes)
+message UAVData {
+  uint64 timestamp_us = 1;       // 指令生成的 UNIX 时间戳 (微秒)
+  uint32 uav_id = 2;             // 自身无人机的唯一标识符
+  GeoPoint safe_space_min = 3;   // 安全空间边界的最小点
+  GeoPoint safe_space_max = 4;   // 安全空间边界的最大点
+  GeoPoint guidance_waypoint = 5;// 飞行的目标点
+  uint64 expire_at_us = 6;       // 指令失效的 UNIX 时间戳 (微秒)
+  uint32 traffic_count = 7;      // 负载中 OtherUAVState 的数量
+  repeated OtherUAVState traffic_data = 8; // 其他无人机状态数组
+}

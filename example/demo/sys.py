@@ -60,7 +60,7 @@ def sys_receive(interface, mqtt_uav_client):
             message = receive_meshtastic_message()  # 会阻塞直到有消息
             print("✅ 收到消息:", message)
 
-            # 如果需要转发到 MQTT，这里处理即可
+            # 转发到 MQTT
             mqtt_uav_client.publish(message)
 
     except KeyboardInterrupt:
