@@ -36,8 +36,12 @@ def main(uav_id):
 
     # 仅测试用
     time.sleep(2)
+
+    hub_id = devinfo['dev_id']['hub'+uav_id]
+    print(f"⚙️ 创建 hub{uav_id} 接口: {hub_id}\n")
+
     for _ in range(10):
-        uav_send(interface, devinfo['dev_id']['hub1'])
+        uav_send(interface, hub_id)
         time.sleep(2)  # 可根据需要调整发送间隔
 
 
@@ -71,9 +75,9 @@ def uav_receive(interface):
 if __name__ == "__main__":
     uav_id = None
 
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 2:
         uav_id = sys.argv[1]
-    elif len(sys.argv) > 1:
+    elif len(sys.argv) > 2:
         print("🔴 参数输入过多，请输入一个参数，例如：python uav.py uav1\n")
         sys.exit(1)
     else:

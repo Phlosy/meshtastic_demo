@@ -1,5 +1,5 @@
 # uav_wrapper.py
-from my_meshtastic.proto import UAVStatus, UAVData
+from my_meshtastic.proto.uavstatus_pb2 import UAVStatus, UAVData
 import time
 import json
 
