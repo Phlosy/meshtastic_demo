@@ -1,12 +1,19 @@
 dev_path:
   dev1: "/dev/ttyACM0"
   dev2: "/dev/ttyACM1"
+  dev3: "/dev/ttyACM2"
+  dev4: "/dev/ttyACM3"
 
 dev_id:
   uav1: "!bb020b8d" # node5 dev1
   uav2: "!f4624b5c" # node5 dev2
+  uav3: "!04409c72" # node5 dev3
+  uav4: "!e743f0c8" # node5 dev4
   hub1: "!c1107116" # node7 dev1
   hub2: "!f0cfb0f1" # node7 dev2
+  hub3: "!2b6e7852" # node7 dev3
+  hub4: "!109f2797" # node7 dev4
+
 
 broker: 
   host: "localhost"

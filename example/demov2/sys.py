@@ -19,7 +19,7 @@ def main():
     print(devinfo)
 
     # 创建meshtastic接口
-    interface = meshtastic.serial_interface.SerialInterface(devPath=devinfo['dev_path']['dev4'])
+    interface = meshtastic.serial_interface.SerialInterface(devPath=devinfo['dev_path']['dev2'])
 
     # 启动后台线程监听meshtastic设备
     listener_thread = threading.Thread(target=listen, args=(interface,), daemon=True)

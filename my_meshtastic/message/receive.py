@@ -15,7 +15,7 @@ def on_receive_payload(packet, interface):
     text = packet['decoded'].get('text')
     # 原始 payload
     payload = packet['decoded'].get('payload')
-    # print(f"📩 收到消息 from {packet['from']} to {packet['to']}: text={text}, payload={payload}")
+    print(f"📩 收到消息 from {packet['from']} to {packet['to']}: text={text}, payload={payload}")
     if text:
         message_queue.put(text)
 
