@@ -1,4 +1,5 @@
 # uav_wrapper.py
+from google.protobuf.json_format import Parse
 from my_meshtastic.proto.uavstatus_pb2 import UAVStatus, UAVData
 import time
 import json
@@ -27,16 +28,47 @@ class UAVWrapper:
         )
 
     @staticmethod
-    def serialize(data: UAVData) -> bytes:
-        """序列化为字节"""
-        return data.SerializeToString()
+    def serialize(data) -> bytes:
+        """
+        通用序列化函数：
+        - UAVData 对象：调用 SerializeToString()
+        - dict：转换为 UAVData 后再序列化
+        - str：若能解析为 JSON 就转成 UAVData，否则按 UTF-8 文本编码
+        - bytes：原样返回
+        """
+        if data is None:
+            return b""
+
+        # ✅ 已是 UAVData
+        if hasattr(data, "SerializeToString"):
+            return data.SerializeToString()
+
+        if isinstance(data, str):
+            msg = UAVData()
+            Parse(data, msg, ignore_unknown_fields=True)
+            return msg.SerializeToString()
+        
+        print(f"❌ 序列化失败：无法处理类型: {type(data)}")
+        return None
 
     @staticmethod
-    def deserialize(raw: bytes) -> UAVData:
-        """从字节反序列化"""
+    def deserialize(raw) -> UAVData:
+        """
+        通用反序列化：
+        - bytes：ParseFromString()
+        - str：尝试解析 JSON → UAVData
+        - 其他类型：抛异常
+        """
         msg = UAVData()
-        msg.ParseFromString(raw)
-        return msg
+
+        # ✅ 如果是 protobuf bytes
+
+        try:
+            msg.ParseFromString(raw)
+            return msg
+        except Exception as e:
+            raise ValueError(f"反序列化失败（非有效的UAVData字节流）: {e}")
+
 
     @staticmethod
     def to_json(data: UAVData) -> str:

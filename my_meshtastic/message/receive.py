@@ -1,40 +1,59 @@
-import meshtastic
 import meshtastic.serial_interface
+import queue
 import time
 from pubsub import pub
-import queue
+from my_meshtastic.data import UAVWrapper
 
-# 队列保存消息
-message_queue = queue.Queue()
+# ------------------- 接口专属消息接收器 -------------------
+# ------------------从mesh设备接受消息---------------------
 
-def on_receive(packet, interface):
-    print("📩 收到消息:", packet)
+class SysInterfaceReceiver:
+    def __init__(self, interface, uav_client):
+        self.interface = interface
+        self.queue = queue.Queue()
+        self.uav_client = uav_client
+        # 订阅全局主题，但用回调里按 interface 过滤
+        pub.subscribe(self.on_receive_payload, "meshtastic.receive")
+        print(f"✅ 已绑定接口 {getattr(self.interface, 'devPath', '<iface>')}")
 
-def on_receive_payload(packet, interface):
-    # 文本消息
-    text = packet['decoded'].get('text')
-    # 原始 payload
-    payload = packet['decoded'].get('payload')
-    print(f"📩 收到消息 from {packet['from']} to {packet['to']}: text={text}, payload={payload}")
-    if text:
-        message_queue.put(text)
+    def on_receive_payload(self, packet, interface):
+        # 关键：只处理“本接口”的消息，隔离不同串口
+        if interface is not self.interface:
+            return
+
+        decoded = packet.get('decoded', {}) if isinstance(packet, dict) else {}
+        raw_text = decoded.get('text')
+        raw_payload = decoded.get('payload')
+
+        try:
+            text = raw_text
+            payload = UAVWrapper.deserialize(raw_payload)
+            # payload = UAVWrapper.deserialize(raw_payload)
+            # payload = raw_payload
+        except Exception as e:
+            print(f"❌ 反序列化失败: {e}")
+            # print(f"raw_text: {type(raw_text)}")
+            print(f"raw_payload: {type(raw_payload)}")
+            return
+
+        print(f"📩 [{getattr(self.interface, 'devPath', '<iface>')}] "
+              f"from={packet.get('from')} to={packet.get('to')} text={text} payload={payload}")
+
+        if payload:
+            self.queue.put(UAVWrapper.to_json(payload))
 
 
-def listen(interface):
-    # 连接本地设备
-    # interface = meshtastic.serial_interface.SerialInterface(devPath=devPath)
+    def receive_message(self):
+        return self.queue.get()
 
-    # 注册接收消息的回调
-    # interface.onReceive = on_receive
-    pub.subscribe(on_receive_payload, "meshtastic.receive")
+    def listen_forever(self):
+        print(f"开始监听接口 {getattr(self.interface, 'devPath', '<iface>')} ...")
+        try:
+            while True:
+                time.sleep(0.1)
+        except KeyboardInterrupt:
+            print(f"退出监听 {getattr(self.interface, 'devPath', '<iface>')}")
+            self.interface.close()
 
-    print("开始监听消息...")
-    try:
-        while True:
-            time.sleep(0.01)  # 保持主线程运行
-    except KeyboardInterrupt:
-        print("退出监听")
-        interface.close()
-
-def receive_meshtastic_message():
-    return message_queue.get()
+    def close(self):
+        self.interface.close()

@@ -24,8 +24,8 @@ class MQTTClient:
 
     def on_message(self, client, userdata, msg):
         """收到消息回调"""
-        print(f"📨 收到消息: {msg.topic} -> {msg.payload.decode()}")
-        self.message_queue.put(msg.payload.decode())
+        print(f"📨 收到消息: {msg.topic} -> {msg.payload}")
+        self.message_queue.put(msg.payload)
 
     def receive_mqtt_message(self):
         """接收消息"""
@@ -71,3 +71,4 @@ class MQTTClient:
 
 #     # 进入循环，保持监听
 #     mqtt_client.loop_forever()
+

@@ -2,7 +2,7 @@
 import time
 import json
 from my_meshtastic.proto import GeoPoint, OtherUAVState, UAVData
-
+from google.protobuf.json_format import Parse
 
 class SysWrapper:
     @staticmethod
@@ -40,14 +40,34 @@ class SysWrapper:
     @staticmethod
     def serialize(data: UAVData) -> bytes:
         """序列化为字节"""
-        return data.SerializeToString()
+        if data is None:
+            return b""
+
+        if hasattr(data, "SerializeToString"):
+            return data.SerializeToString()
+
+        if isinstance(data, str):
+            msg = UAVData()
+            Parse(data, msg, ignore_unknown_fields=True)
+            return msg
+        
+        print(f"❌ 序列化失败：无法处理类型: {type(data)}")
+        return None
+
 
     @staticmethod
     def deserialize(raw: bytes) -> UAVData:
         """反序列化为 UAVData"""
         msg = UAVData()
-        msg.ParseFromString(raw)
-        return msg
+
+        if isinstance(raw, (bytes, bytearray)):
+            try:
+                msg.ParseFromString(raw)
+                return msg
+            except Exception as e:
+                print(f"❌ 反序列化失败：无法处理类型: {type(raw)}")
+                return None
+
 
     @staticmethod
     def to_json(data: UAVData) -> str:

@@ -33,7 +33,6 @@ def main(uav_id):
     # interface.sendData(data_message, destinationId=target_node_id)
     # assert isinstance(interface, meshtastic.serial_interface.SerialInterface), "interface must be a meshtastic.serial_interface.SerialInterface object"
 
-
     # 仅测试用
     time.sleep(2)
 
@@ -43,8 +42,6 @@ def main(uav_id):
     for _ in range(10):
         uav_send(interface, hub_id)
         time.sleep(2)  # 可根据需要调整发送间隔
-
-
 
 def uav_send(interface,destdev):
     """
