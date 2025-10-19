@@ -8,12 +8,17 @@ class UAVWrapper:
     @staticmethod
     def generate_status_demo() -> UAVStatus:
         """生成一条 UAVStatus 示例"""
+         # 在 ±0.01 量级（即 ±0.01 度 ≈ ±1km）范围内增加随机扰动
+        lat = 39.98 + random.uniform(-0.01, 0.01)
+        lon = 116.3 + random.uniform(-0.01, 0.01)
+        alt = 100.0 + random.uniform(-0.01, 0.01)  # 高度单位是米，这里相当于 ±1 cm 微扰
+
         return UAVStatus(
             timestamp_us=int(time.time() * 1e6),
             uav_id=1,
-            latitude=int(39.98 * 1e7),
-            longitude=int(116.3 * 1e7),
-            altitude_msl=100.0,
+            latitude=int(lat * 1e7),
+            longitude=int(lon * 1e7),
+            altitude_msl=alt,
             attitude_q=[0.7071, 0.0, 0.0, 0.7071],
             velocity_ned=[0.0, 0.0, -1.0],
         )
