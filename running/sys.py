@@ -9,7 +9,7 @@ import meshtastic.serial_interface
 
 from my_meshtastic.loader import load_config
 from my_meshtastic.mqtt import MQTTClient
-from my_meshtastic.data import UAVWrapper
+from my_meshtastic.data import UAVWrapper, SysWrapper
 from my_meshtastic.message.receive import SysInterfaceReceiver
 from my_meshtastic.message.send import SysInterfaceSender
 
@@ -192,7 +192,7 @@ def sys_send(sys_interface_sender, uav_id):
 
             # 如果msg为str，转化为bytes
             if isinstance(msg, str):
-                bytes_msg = UAVWrapper.serialsize(msg)
+                bytes_msg = SysWrapper.serialize(msg)
             else:
                 bytes_msg = msg
 

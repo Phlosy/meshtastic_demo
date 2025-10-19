@@ -8,42 +8,75 @@ import threading
 import time
 
 from my_meshtastic.loader import load_config
-from my_meshtastic.message.send import send_message
-from my_meshtastic.message.receive import listen
+from my_meshtastic.message.send import UavInterfaceSender
+from my_meshtastic.message.receive import UavInterfaceReceiver
 from my_meshtastic.data import UAVWrapper
 
-def main(uav_id):
+def main(uav_id, num_interfaces):
  
-    # 加载配置
-    devinfo=load_config("config/config.yaml")
-    # print(devinfo)
+    # ---------------------------------------------- 加载配置 ----------------------------------------------
+    devinfo = load_config("config/config.yaml")
 
-    dev_path = devinfo['dev_path']["dev"+uav_id]
-    print(f"⚙️ 创建 uav{uav_id} 接口: {dev_path}\n")
+    # 获取本地设备路径
+    local_dev_path = []
+    for i in range(num_interfaces):
+        local_dev_path.append(devinfo["dev_path"]["dev"+str(i+1)])
+
+    # 获取连接的 uav/sys 设备ID
+    uav_ids= []
+    sys_ids= []
+    for i in range(num_interfaces):
+        uav_ids.append(devinfo["dev_id"]["uav"+str(i+1)])
+        sys_ids.append(devinfo["dev_id"]["hub"+str(i+1)])
+
+    print(local_dev_path,"\n")
+    print(uav_ids,"\n")
+    print(sys_ids,"\n")
+
+    print(f"⚙️ 计划创建 uav{uav_id} Meshtastic 接口\n")
+
+    spawned_threads = []
 
     # 创建meshtastic接口
     try:
+        dev_path = local_dev_path[uav_id-1]
         interface = meshtastic.serial_interface.SerialInterface(devPath=dev_path)
-        listener_thread = threading.Thread(target=listen, args=(interface,), daemon=True)
-        listener_thread.start()
-        print(f"✅ 创建 uav{uav_id} 接口成功: {dev_path}\n")
     except Exception as e:
         print(f"❌ 创建 uav{uav_id} 接口失败: {e}\n")
         sys.exit(1)
-    # interface.sendData(data_message, destinationId=target_node_id)
-    # assert isinstance(interface, meshtastic.serial_interface.SerialInterface), "interface must be a meshtastic.serial_interface.SerialInterface object"
+
+    try:
+        uav_interface_receiver = UavInterfaceReceiver(interface)
+    except Exception as e:
+        print(f"❌ 创建 uav{uav_id} 接口接收器失败: {e}\n")
+        sys.exit(1)
+
+    try:
+        uav_interface_sender = UavInterfaceSender(interface)
+    except Exception as e:
+        print(f"❌ 创建 uav{uav_id} 接口发送器失败: {e}\n")
+        sys.exit(1)
+
+    t_recv = threading.Thread(
+        target=uav_receive, args=(uav_interface_receiver,), daemon=True
+    )
+    t_recv.start()
+    spawned_threads.append(t_recv)
+
+    # t_send = threading.Thread(
+    #     target=uav_send, args=(uav_interface_sender, sys_ids[uav_id-1]), daemon=True
+    # )
+    # t_send.start()
+    # spawned_threads.append(t_send)
 
     # 仅测试用
     time.sleep(2)
 
-    hub_id = devinfo['dev_id']['hub'+uav_id]
-    print(f"⚙️ 创建 hub{uav_id} 接口: {hub_id}\n")
-
     for _ in range(10):
-        uav_send(interface, hub_id)
+        uav_send(uav_interface_sender, sys_ids[uav_id-1])
         time.sleep(2)  # 可根据需要调整发送间隔
 
-def uav_send(interface,destdev):
+def uav_send(uav_interface_sender,sys_id):
     """
     加载配置
     生成UAV状态数据demo
@@ -58,33 +91,36 @@ def uav_send(interface,destdev):
     data = UAVWrapper.serialize(uav_data)
     print(len(data))
     # 发送到sys上的设备
-    send_message(interface, data, destdev)
+    uav_interface_sender.send_payload(data, sys_id)
 
 
-def uav_receive(interface):
+def uav_receive(uav_interface_receiver):
     """
-    监听meshtastic设备
-    接收UAV状态数据
-    打印
+    从全局接收队列获取 Meshtastic 消息，打印
     """
-    listen(interface)
+    try:
+        while True:
+            msg = uav_interface_receiver.receive_message()  # 阻塞直到收到消息（listen 线程产出）
+
+            if msg is None:
+                time.sleep(0.05)
+                continue
+            print("📥 接收自 Meshtastic:", msg, "\n")
+
+    except Exception as e:
+        print(f"❌ uav_receive 出错: {e}\n")
 
 if __name__ == "__main__":
     uav_id = None
+    num_interfaces = 4
 
-    if len(sys.argv) == 2:
-        uav_id = sys.argv[1]
+    if len(sys.argv) ==2:
+        uav_id = int(sys.argv[1])
     elif len(sys.argv) > 2:
-        print("🔴 参数输入过多，请输入一个参数，例如：python uav.py uav1\n")
-        sys.exit(1)
+        uav_id = int(sys.argv[1])
+        num_interfaces = int(sys.argv[2])
     else:
-        print("🔴 请输入一个参数，例如：python uav.py uav1\n")
+        print("🔴 参数输入错误，请输入正确参数，例如：python uav.py 1 4\n")
         sys.exit(1)
 
-    main(uav_id)
-
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("🔴 手动退出")
+    main(uav_id, num_interfaces)

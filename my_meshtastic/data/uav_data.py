@@ -3,6 +3,7 @@ from google.protobuf.json_format import Parse
 from my_meshtastic.proto.uavstatus_pb2 import UAVStatus, UAVData
 import time
 import json
+import random
 
 class UAVWrapper:
     @staticmethod
