@@ -99,3 +99,26 @@ class UAVWrapper:
             ensure_ascii=False,
             indent=2,
         )
+
+
+    @staticmethod
+    def from_json(json_str: str) -> UAVData:
+        """从 JSON 字符串还原为 UAVData"""
+        obj = json.loads(json_str)
+        fields = [
+            UAVStatus(
+                timestamp_us=f["timestamp_us"],
+                uav_id=f["uav_id"],
+                latitude=f["latitude"],
+                longitude=f["longitude"],
+                altitude_msl=f["altitude_msl"],
+                attitude_q=tuple(f["attitude_q"]),
+                velocity_ned=tuple(f["velocity_ned"]),
+            )
+            for f in obj.get("fields", [])
+        ]
+        return UAVData(
+            type=obj["type"],
+            name=obj["name"],
+            fields=fields,
+        )

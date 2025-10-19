@@ -3,7 +3,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from my_meshtastic.loader import load_config
-from my_meshtastic.data import UAVWrapper
+from my_meshtastic.data import UAVWrapper, SysWrapper
 from my_meshtastic.mqtt import MQTTClient
 import json
 
@@ -39,8 +39,12 @@ def main():
     # 连接到 broker
     mqtt_client.connect()
 
+    data=SysWrapper.generate_data_demo(num=2)
+    print(data)
+
+    bytes_data=SysWrapper.serialize(data)
     # 发布一条测试消息
-    mqtt_client.publish("Hello from class wrapper!")
+    mqtt_client.publish(bytes_data)
 
     # # 进入循环，保持监听
     # mqtt_client.loop_forever()

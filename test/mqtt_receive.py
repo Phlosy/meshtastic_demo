@@ -32,7 +32,7 @@ def main():
 
     # 初始化客户端
     i=0
-    mqtt_client = MQTTClient(broker="localhost", port=1883, topic=f"hub/{sys_ids[i]}")
+    mqtt_client = MQTTClient(broker="localhost", port=1883, topic=f"sys/{sys_ids[i]}")
     # 连接到 broker
     mqtt_client.connect()
 

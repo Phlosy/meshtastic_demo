@@ -3,6 +3,7 @@ import time
 import json
 from my_meshtastic.proto import GeoPoint, OtherUAVState, UAVData
 from google.protobuf.json_format import Parse
+import random
 
 class SysWrapper:
     @staticmethod
@@ -29,9 +30,9 @@ class SysWrapper:
         return UAVData(
             timestamp_us=int(time.time() * 1e6),
             uav_id=1,
-            safe_space_min=SysWrapper.generate_geo_point(39.97, 116.29, 90.0),
-            safe_space_max=SysWrapper.generate_geo_point(39.99, 116.31, 110.0),
-            guidance_waypoint=SysWrapper.generate_geo_point(40.0, 116.32, 150.0),
+            safe_space_min=SysWrapper.generate_geo_point(39.97+random.uniform(-0.1, 0.1), 116.29+random.uniform(-0.1, 0.1), 90.0+random.uniform(-10.0, 10.0)),
+            safe_space_max=SysWrapper.generate_geo_point(39.99+random.uniform(-0.1, 0.1), 116.31+random.uniform(-0.1, 0.1), 110.0+random.uniform(-10.0, 10.0)),
+            guidance_waypoint=SysWrapper.generate_geo_point(40.0+random.uniform(-0.1, 0.1), 116.32+random.uniform(-0.1, 0.1), 150.0+random.uniform(-10.0, 10.0)),
             expire_at_us=int(time.time() * 1e6) + 10_000_000,  # +10s
             traffic_count=num,
             traffic_data=[SysWrapper.generate_other_uav(i + 2) for i in range(num)],
@@ -108,4 +109,36 @@ class SysWrapper:
             },
             ensure_ascii=False,
             indent=2,
+        )
+
+    @staticmethod
+    def from_json(json_str: str) -> UAVData:
+        """从 JSON 字符串还原为 UAVData"""
+        obj = json.loads(json_str)
+
+        def pos(d):
+            return GeoPoint(
+                latitude=d["lat"],
+                longitude=d["lon"],
+                altitude_msl=d["alt"],
+            )
+
+        traffic_list = [
+            OtherUAVState(
+                uav_id=f["uav_id"],
+                position=pos(f["position"]),
+                velocity_ned=tuple(f["velocity_ned"]),
+            )
+            for f in obj["traffic_data"]
+        ]
+
+        return UAVData(
+            timestamp_us=obj["timestamp_us"],
+            uav_id=obj["uav_id"],
+            safe_space_min=pos(obj["safe_space_min"]),
+            safe_space_max=pos(obj["safe_space_max"]),
+            guidance_waypoint=pos(obj["guidance_waypoint"]),
+            expire_at_us=obj["expire_at_us"],
+            traffic_count=obj["traffic_count"],
+            traffic_data=traffic_list,
         )

@@ -11,6 +11,7 @@ from my_meshtastic.loader import load_config
 from my_meshtastic.message.send import UavInterfaceSender
 from my_meshtastic.message.receive import UavInterfaceReceiver
 from my_meshtastic.data import UAVWrapper
+from my_meshtastic.data import SysWrapper
 
 def main(uav_id, num_interfaces):
  
@@ -105,7 +106,9 @@ def uav_receive(uav_interface_receiver):
             if msg is None:
                 time.sleep(0.05)
                 continue
-            print("📥 接收自 Meshtastic:", msg, "\n")
+
+            payload = SysWrapper.deserialize(msg)
+            print("📥 接收自 Meshtastic:", payload, "\n")
 
     except Exception as e:
         print(f"❌ uav_receive 出错: {e}\n")

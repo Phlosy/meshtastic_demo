@@ -131,6 +131,10 @@ def main(num_interfaces: int):
         t_recv.start()
         spawned_threads.append(t_recv)
 
+        t_mqtt_loop = threading.Thread(target=sys_interface_senders[i].sys_client.loop_forever)
+        t_mqtt_loop.start()
+        spawned_threads.append(t_mqtt_loop)
+
         t_send = threading.Thread(
             target=sys_send, args=(sys_interface_senders[i], uav_ids[i]), daemon=True
         )
