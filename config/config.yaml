@@ -1,8 +1,14 @@
+# dev_path:
+#   dev1: "/dev/ttyACM0"
+#   dev2: "/dev/ttyACM1"
+#   dev3: "/dev/ttyACM2"
+#   dev4: "/dev/ttyACM3"
+
 dev_path:
-  dev1: "/dev/ttyACM0"
-  dev2: "/dev/ttyACM1"
-  dev3: "/dev/ttyACM2"
-  dev4: "/dev/ttyACM3"
+  dev1: "COM3"
+  dev2: "COM11"
+  dev3: "COM12"
+  dev4: "COM13"
 
 dev_id:
   uav1: "!bb020b8d" # node5 dev1
@@ -17,4 +23,4 @@ dev_id:
 
 broker: 
   host: "localhost"
-  port: 1883
+  port: 18001

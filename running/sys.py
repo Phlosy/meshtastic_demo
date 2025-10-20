@@ -62,7 +62,7 @@ def main(num_interfaces: int):
 
         # 为该接口创建一个独立的UAV MQTT客户端
         try:
-            uav_topic = f"uav/{uav_ids[i]}"  # 每个接口各用一个主题，方便区分
+            uav_topic = f"drone/{uav_ids[i]}"  # 每个接口各用一个主题，方便区分
 
             # 监听灯塔的sys的topic
             uav_client = MQTTClient(broker=broker_host, port=broker_port, topic=uav_topic)
@@ -91,7 +91,7 @@ def main(num_interfaces: int):
 
         # 创建SYS MQTT客户端
         try:
-            sys_topic = f"sys/{sys_ids[i]}"  # 每个接口各用一个主题，方便区分
+            sys_topic = f"situation/app/{sys_ids[i]}"  # 每个接口各用一个主题，方便区分
             # 发送uva的消息至topic
             sys_client = MQTTClient(broker=broker_host, port=broker_port, topic=sys_topic)
             sys_client.connect()
