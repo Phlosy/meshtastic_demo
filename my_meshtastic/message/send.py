@@ -6,8 +6,8 @@ from pubsub import pub
 # ------------------向mesh设备发送消息---------------------
 
 class SysInterfaceSender:
-    def __init__(self, interface, sys_client):
-        self.interface = interface
+    def __init__(self, interface: meshtastic.serial_interface.SerialInterface, sys_client):
+        self.interface= interface
         self.sys_client = sys_client
         print(f"✅ 已绑定接口 {getattr(self.interface, 'devPath', '<iface>')}")
 
@@ -25,7 +25,7 @@ class SysInterfaceSender:
         self.interface.close()
 
 class UavInterfaceSender:
-    def __init__(self, interface):
+    def __init__(self, interface: meshtastic.serial_interface.SerialInterface):
         self.interface = interface
         print(f"✅ 已绑定接口 {getattr(self.interface, 'devPath', '<iface>')}")
 
