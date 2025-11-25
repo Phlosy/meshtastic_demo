@@ -41,8 +41,10 @@ def main(num_interfaces: int):
     print(f"⚙️ 计划创建 {num_interfaces} 个 Meshtastic 接口\n")
 
     # ---------------------------------------------- 初始化每个接口 ----------------------------------------------
-    broker_host = devinfo.get("broker", {}).get("host", "localhost")
-    broker_port = devinfo.get("broker", {}).get("port", 1883)
+    broker_edge_host = devinfo.get("broker_edge", {}).get("host", "localhost")
+    broker_edge_port = devinfo.get("broker_edge", {}).get("port", 18001)
+    broker_center_host = devinfo.get("broker_center", {}).get("host", "localhost")
+    broker_center_port = devinfo.get("broker_center", {}).get("port", 18001)
 
     sys_interface_receivers = []
     sys_interface_senders = []
@@ -62,10 +64,10 @@ def main(num_interfaces: int):
 
         # 为该接口创建一个独立的UAV MQTT客户端
         try:
-            uav_topic = f"drone/{uav_ids[i]}"  # 每个接口各用一个主题，方便区分
+            uav_topic = f"drone/{uav_ids[i+1]}"  # 每个接口各用一个主题，方便区分
 
             # 监听灯塔的sys的topic
-            uav_client = MQTTClient(broker=broker_host, port=broker_port, topic=uav_topic)
+            uav_client = MQTTClient(broker=broker_edge_host, port=broker_edge_port, topic=uav_topic)
             uav_client.connect()
 
             print(f"✅ 创建UAV MQTT主题{uav_topic}成功\n")
@@ -91,9 +93,9 @@ def main(num_interfaces: int):
 
         # 创建SYS MQTT客户端
         try:
-            sys_topic = f"situation/app/{sys_ids[i]}"  # 每个接口各用一个主题，方便区分
+            sys_topic = f"situation/app/drone/{i+1}"  # 每个接口各用一个主题，方便区分
             # 发送uva的消息至topic
-            sys_client = MQTTClient(broker=broker_host, port=broker_port, topic=sys_topic)
+            sys_client = MQTTClient(broker=broker_center_host, port=broker_center_port, topic=sys_topic)
             sys_client.connect()
             print(f"✅ 创建SYS MQTT主题{sys_topic}成功\n")
 
@@ -177,6 +179,7 @@ def sys_receive(sys_interface_receiver):
             print("📥 接收自 Meshtastic:", msg, "\n")
 
             # 发布到MQTT
+            # print("📤 发布到MQTT:", msg, "\n")
             sys_interface_receiver.uav_client.publish(msg)
     except Exception as e:
         print(f"❌ sys_receive 出错: {e}\n")
@@ -194,11 +197,13 @@ def sys_send(sys_interface_sender, uav_id):
                 time.sleep(0.05)
                 continue
 
-            # 如果msg为str，转化为bytes
-            if isinstance(msg, str):
-                bytes_msg = SysWrapper.serialize(msg)
-            else:
-                bytes_msg = msg
+            # # 如果msg为str，转化为bytes
+            # if isinstance(msg, str):
+            #     bytes_msg = SysWrapper.serialize(msg)
+            # else:
+            #     bytes_msg = msg
+
+            bytes_msg = msg
 
             print("📤 从 MQTT 收到系统消息:", msg, "\n")
 

@@ -28,9 +28,9 @@ class SysInterfaceReceiver:
 
         try:
             text = raw_text
-            payload = UAVWrapper.deserialize(raw_payload)
             # payload = UAVWrapper.deserialize(raw_payload)
-            # payload = raw_payload
+            # payload = UAVWrapper.deserialize(raw_payload)
+            payload = raw_payload
         except Exception as e:
             print(f"❌ 反序列化失败: {e}")
             # print(f"raw_text: {type(raw_text)}")
@@ -41,7 +41,8 @@ class SysInterfaceReceiver:
               f"from={packet.get('from')} to={packet.get('to')} text={text} payload={payload}")
 
         if payload:
-            self.queue.put(UAVWrapper.to_json(payload))
+            # self.queue.put(UAVWrapper.to_json(payload))
+            self.queue.put(payload)
 
 
     def receive_message(self):
@@ -80,7 +81,8 @@ class UavInterfaceReceiver:
 
         try:
             text = raw_text
-            payload = SysWrapper.deserialize(raw_payload)
+            # payload = SysWrapper.deserialize(raw_payload)
+            payload = raw_payload
         except Exception as e:
             print(f"❌ 反序列化失败: {e}")
             print(f"raw_payload: {type(raw_payload)}")
@@ -90,7 +92,8 @@ class UavInterfaceReceiver:
               f"from={packet.get('from')} to={packet.get('to')} text={text} payload={payload}")
 
         if payload:
-            self.queue.put(SysWrapper.to_json(payload))
+            # self.queue.put(SysWrapper.to_json(payload))
+            self.queue.put(payload)
 
     def receive_message(self):
         return self.queue.get()

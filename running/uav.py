@@ -134,7 +134,8 @@ def uav_send(uav_interface_sender, sys_id, uav_data):
     print(f"准备发送 UAV 数据到 sys_id: {sys_id}")
     print(f"UAV 数据: {uav_data}")
 
-    data = UAVWrapper.serialize(uav_data)
+    # data = UAVWrapper.serialize(uav_data)
+    data = uav_data
     print(len(data))
     # 发送到sys上的设备
     uav_interface_sender.send_payload(data, sys_id)
@@ -152,7 +153,8 @@ def uav_receive(uav_interface_receiver, uav_id, uav_client):
                 time.sleep(0.05)
                 continue
 
-            payload = SysWrapper.deserialize(msg)
+            # payload = SysWrapper.deserialize(msg)
+            payload = msg
             print("📥 接收自 Meshtastic:", payload, "\n")
             print("payload type:", type(payload))
 

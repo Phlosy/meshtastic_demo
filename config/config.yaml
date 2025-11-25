@@ -28,7 +28,11 @@ dev_id:
 #   hub4: "!109f2797" # node7 dev4
 
 
-broker: 
+broker_edge: 
   host: "localhost"
   # port: 18001
-  port: 1883
+  port: 18001
+
+broker_center:
+  host: "localhost"
+  port: 18001
