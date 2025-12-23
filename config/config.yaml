@@ -1,7 +1,7 @@
 dev_path:
   dev1: "/dev/ttyACM0"
-  # dev2: "/dev/ttyACM1"
-  # dev1: "/dev/ttyACM2"
+  dev2: "/dev/ttyACM1"
+  dev3: "/dev/ttyACM2"
   # dev2: "/dev/ttyACM3"
 
 # dev_path:
@@ -10,11 +10,16 @@ dev_path:
 #   dev3: "COM12"
 #   dev4: "COM13"
 
+
+
+
 dev_id:
-  uav1: "!04409c72" # node5 dev3
-  uav2: "!e743f0c8" # node5 dev4
-  hub1: "!2b6e7852" # node7 dev3
-  hub2: "!109f2797" # node7 dev4
+  uav1: "!f4624b5c" # node5 dev3
+  uav2: "!f0cfb0f1" # node5 dev4
+  uav3: "!04409c72" # node5 dev4
+  hub1: "!c1107116" # node7 dev3
+  hub2: "!bb020b8d" # node7 dev4
+  hub3: "!e743f0c8" # node7 dev4
 
 # dev_id:
 #   uav1: "!bb020b8d" # node5 dev1
@@ -28,11 +33,7 @@ dev_id:
 #   hub4: "!109f2797" # node7 dev4
 
 
-broker_edge: 
+broker: 
   host: "localhost"
   # port: 18001
-  port: 18001
-
-broker_center:
-  host: "localhost"
-  port: 18001
+  port: 1883

@@ -66,7 +66,7 @@ def main(uav_id, num_interfaces):
         sys.exit(1)
 
     # 启动gRPC客户端
-    uav_client = UavServiceClient(server_address='localhost:50052')
+    uav_client = UavServiceClient(server_address='localhost:50054')
     if not uav_client.connect():
         print("无法连接到服务器，请确保服务器正在运行")
         return
@@ -106,7 +106,7 @@ def main(uav_id, num_interfaces):
             uav_send(uav_interface_sender, sys_id, received_data)
     
     # 启动 gRPC 服务器（在单独的线程中）
-    grpc_port = 50051  # 为每个 UAV 分配不同的端口
+    grpc_port = 50053  # 为每个 UAV 分配不同的端口
     t_grpc = threading.Thread(
         target=serve, args=(grpc_port,), kwargs={'send_callback': send_callback}, daemon=True
     )

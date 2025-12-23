@@ -41,8 +41,7 @@ class SysInterfaceReceiver:
               f"from={packet.get('from')} to={packet.get('to')} text={text} payload={payload}")
 
         if payload:
-            # self.queue.put(UAVWrapper.to_json(payload))
-            self.queue.put(payload)
+            self.queue.put(UAVWrapper.to_json(payload))
 
 
     def receive_message(self):

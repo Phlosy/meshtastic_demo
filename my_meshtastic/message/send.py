@@ -19,7 +19,7 @@ class SysInterfaceSender:
         data_message = data_message
         self.interface.sendData(data_message, destinationId=target_node_id)
 
-        print(f"Sent message: '{data_message}' to node {target_node_id}")
+        # print(f"Sent message: '{data_message}' to node {target_node_id}")
 
     def close(self):
         self.interface.close()
@@ -37,7 +37,7 @@ class UavInterfaceSender:
         data_message = data_message
         self.interface.sendData(data_message, destinationId=target_node_id)
 
-        print(f"Sent message: '{data_message}' to node {target_node_id}")
+        # print(f"Sent message: '{data_message}' to node {target_node_id}")
 
     def close(self):
         self.interface.close()
